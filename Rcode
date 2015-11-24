@@ -1,0 +1,29 @@
+####Probability of lead calculator#####
+
+problead <- function(x) {
+	cand1prop <- cand1/100											#convert numbers to proportions for stdev calculation
+	cand2prop <- cand2/100
+	stdev1 <- (sqrt((cand1prop*(1-cand1prop))/sampsize))*100	#calculating the standard deviation for that proportion given the sample size.
+	stdev2 <- (sqrt((cand2prop*(1-cand2prop))/sampsize))*100
+	sims <- 1000000													#number of simulations to run
+	cand1dist <- rnorm(sims,cand1,stdev1)							#simulations for candidate 1
+	cand2dist <- rnorm(sims,cand2,stdev2)							#simulations for candidate 2
+	data <- as.data.frame(cbind(cand1dist,cand2dist))			#create dataset of simulations
+	data$cand1win <- ifelse(cand1dist > cand2dist, 1, 0)		#code 1 if candidate 1 is ahead in simulation
+	data$cand2win <- ifelse(cand2dist > cand1dist, 1, 0)		#code 1 if candidate 2 is ahead in simulation
+	results <- matrix(c(mean(data$cand1win)*100, mean(data$cand2win)*100)) #create matrix of results: probability of each candidate being ahead in simulations
+	rownames(results) <- c("Leading Candidate Ahead", "Trailing Candidate Ahead") 
+	colnames(results) <- c("Prob")							
+	return(results)									
+}
+
+
+###### Inputs needed ######
+
+sampsize <- 600 	#sample size
+cand1 <- 25		#poll value for candidate 1
+cand2 <- 23		#poll value for candidate 2
+
+##### Execute ######
+
+problead()
